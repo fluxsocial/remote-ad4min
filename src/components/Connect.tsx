@@ -40,8 +40,6 @@ export function Connect() {
     return new Promise(async (resolve, reject) => {      
       if (!url) {
         setURLError('URL is required')
-      } else if (!/^(wss?:\/\/)([0-9]{1,3}(?:\.[0-9]{1,3}){3}|[a-zA-Z]+):([0-9]{1,5})(?:\/[a-zA-Z]{0,100})$/.test(url)) {
-        setURLError('Invalid websocket URL')
       } else {
         try {
           const client = buildAd4mClient(url!, token)
@@ -57,7 +55,7 @@ export function Connect() {
             setLoading(false)
           }, 2000)
           
-          await client.runtime.hcAgentInfos();
+          await client.agent.status();
   
           clearTimeout(id)
           

@@ -40,7 +40,7 @@ const initialState: ContextProps = {
     candidate: '',
     auth: '',
     connected: false,
-    connectedLaoding: true
+    connectedLaoding: false,
   },
   methods: {
     configureEndpoint: () => null,
@@ -154,6 +154,7 @@ export function Ad4minProvider({ children }: any) {
       }));
 
       localStorage.setItem('url', url as string);
+      localStorage.setItem('token', token as string);
     } catch (e) {
       console.log('err', e)
 

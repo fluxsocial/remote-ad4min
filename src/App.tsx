@@ -1,7 +1,7 @@
 import Header from './components/Header';
 import Login from './components/Login';
 import './App.css';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Stack } from '@mantine/core';
 import TrustAgent from './components/TrustAgent';
 import Navigation from './components/Navigation';
@@ -14,7 +14,6 @@ import Perspectives from './components/Perspectives';
 import Profile from './components/Profile';
 import Language from './components/Language';
 import Settings from './components/Settings';
-import { appWindow } from '@tauri-apps/api/window';
 import { Connect } from './components/Connect';
 
 const App = () => {
@@ -23,20 +22,6 @@ const App = () => {
   }, methods: {
     handleTrustAgent,
   }} = useContext(Ad4minContext);
-
-  useEffect(() => {
-    let unlisten: () => void;
-
-    appWindow.listen('tauri://close-requested', ({ event, payload }) => {
-      appWindow.hide();
-    }).then((func) => {
-      unlisten = func;
-    }).catch(e => console.error(e));
-
-    return () => {
-      unlisten();
-    }
-  }, []);
 
   return (
     <div className="App">

@@ -16,6 +16,7 @@ export function Connect() {
   }} = useContext(Ad4minContext);
 
   const [url, setURL] = useState("");
+  const [token, setToken] = useState("");
   const [urlError, setURLError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,12 @@ export function Connect() {
     event.preventDefault();
     const { value } = event.target;
     setURL(value);
+  }
+
+  const onTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const { value } = event.target;
+    setToken(value);
   }
 
   const onInitialize = async () => {
@@ -37,7 +44,7 @@ export function Connect() {
         setURLError('Invalid websocket URL')
       } else {
         try {
-          const client = await buildAd4mClient(url!)
+          const client = buildAd4mClient(url!, token)
 
           const id = setTimeout(() => {
             resolve(true)
@@ -54,7 +61,7 @@ export function Connect() {
   
           clearTimeout(id)
           
-          configureEndpoint(url);
+          configureEndpoint(url, token);
 
           resolve(true);
         } catch(e) {
@@ -92,6 +99,15 @@ export function Connect() {
               radius="md" 
               size="md" 
               onChange={onUrlChange}
+              required
+              error={urlError}
+            />
+            <TextInput 
+              label="Ad4m token" 
+              placeholder='Input your token' 
+              radius="md" 
+              size="md" 
+              onChange={onTokenChange}
               required
               error={urlError}
             />

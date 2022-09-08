@@ -1,16 +1,9 @@
 import { Ad4mClient, LinkExpression } from '@perspect3vism/ad4m';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { invoke } from '@tauri-apps/api';
 import { createClient } from 'graphql-ws';
 
-export async function buildAd4mClient(server: string): Promise<Ad4mClient> {
-    let token: string = await invoke("request_credential");
-
-    return buildClient(server, token);
-}
-
-function buildClient(server: string, token: string): Ad4mClient {
+export function buildAd4mClient(server: string, token: string): Ad4mClient {
     const wsLink = new GraphQLWsLink(
         createClient({
             url: server,

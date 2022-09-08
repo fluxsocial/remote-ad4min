@@ -14,7 +14,8 @@ type Props = {
 
 const Profile = (props: Props) => {
   const {state: {
-    url
+    url,
+    token,
   }} = useContext(Ad4minContext);
 
   const [trustedAgents, setTrustedAgents] = useState<any[]>([]);
@@ -29,7 +30,7 @@ const Profile = (props: Props) => {
 
   const getTrustedAgents = useCallback(async () => {
     if (url) {
-      const client = await buildAd4mClient(url);
+      const client = buildAd4mClient(url, token);
       const trustedAgents = await client!.runtime.getTrustedAgents()
       
       const tempTempAgents = [];
@@ -75,14 +76,14 @@ const Profile = (props: Props) => {
 
   const fetchCurrentAgentProfile = useCallback(async () => {
     if (url) {
-      const client = await buildAd4mClient(url);
+      const client = buildAd4mClient(url, token);
       const agent = await client!.agent.me();
   
       const profile = await fetchProfile(agent);
       
       setProfile(profile);
     }
-  }, [url])
+  }, [url, token])
 
   useEffect(() => {
     fetchCurrentAgentProfile();

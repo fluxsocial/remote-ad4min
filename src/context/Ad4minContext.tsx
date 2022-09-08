@@ -3,11 +3,10 @@ import { Ad4mClient, ExceptionType } from "@perspect3vism/ad4m";
 import { ExceptionInfo } from "@perspect3vism/ad4m/lib/src/runtime/RuntimeResolver";
 import { createContext, useCallback, useEffect, useState } from "react";
 import { buildAd4mClient } from "../util";
-import { appWindow } from '@tauri-apps/api/window'
-import { invoke } from '@tauri-apps/api/tauri'
 
 type State = {
   url: string;
+  token: string;
   did: string;
   isInitialized: Boolean;
   isUnlocked: Boolean;
@@ -22,7 +21,7 @@ type State = {
 type ContextProps = {
   state: State;
   methods: {
-    configureEndpoint: (str: string) => void,
+    configureEndpoint: (url: string, token: string) => void,
     resetEndpoint: () => void
     handleTrustAgent: (str: string) => void,
     handleLogin: (client: Ad4mClient, login: Boolean, did: string) => void,
@@ -32,6 +31,7 @@ type ContextProps = {
 const initialState: ContextProps = {
   state: {
     url: '',
+    token: '',
     isInitialized: false,
     did: '',
     isUnlocked: false,
@@ -116,7 +116,9 @@ export function Ad4minProvider({ children }: any) {
           });
         console.log(exception);
 
-        appWindow.setFocus();
+        
+        // TODO popup the browser tab if rquest comes in.
+        // appWindow.setFocus();
 
         return null
       })
@@ -134,8 +136,8 @@ export function Ad4minProvider({ children }: any) {
     return status;
   }, [handleLogin]);
 
-  const connect = useCallback(async (url: string) => {
-    const client = await buildAd4mClient(url);
+  const connect = useCallback(async (url: string, token: string) => {
+    const client = buildAd4mClient(url, token);
     try {
       await checkConnection(url, client);
 
@@ -165,30 +167,12 @@ export function Ad4minProvider({ children }: any) {
 
   useEffect(() => {
     let localStorageURL = localStorage.getItem('url');
+    let token = localStorage.getItem('token');
 
-    if (localStorageURL && localStorageURL !== 'null' && !localStorageURL.includes('localhost')) {
-      if (localStorageURL) {
-        connect(localStorageURL);
-      }
-    } else {
-      invoke('get_port').then((message) => {
-        if (message) {
-          const url = `ws://localhost:${message}/graphql`;
-          connect(url);
-        }
-      })
+    if (localStorageURL && token) {
+      connect(localStorageURL, token);
     }
   }, [checkConnection, checkIfAgentIsInitialized, connect]);
-
-  useEffect(() => {
-    appWindow.listen('ready', async () => {
-      const message = await invoke('get_port');
-      if (message) {
-        const url = `ws://localhost:${message}/graphql`;
-        connect(url);
-      }
-    })
-  }, [connect])
 
   const handleTrustAgent = (candidate: string) => {
     setState((prev) => ({
@@ -197,14 +181,14 @@ export function Ad4minProvider({ children }: any) {
     }));
   }
 
-  const configureEndpoint = async (url: string) => {
+  const configureEndpoint = async (url: string, token: string) => {
     if (url) {
       setState((prev) => ({
         ...prev,
         url
       }));
 
-      await connect(url)
+      await connect(url, token)
     }
   }
 
@@ -220,7 +204,7 @@ export function Ad4minProvider({ children }: any) {
 
   useEffect(() => {
     const build = async () => {
-      const client = await buildAd4mClient(state.url)
+      const client = buildAd4mClient(state.url, state.token)
 
       setState((prev) => ({
         ...prev,
@@ -231,7 +215,7 @@ export function Ad4minProvider({ children }: any) {
       console.log('gggg 0', state.url);
       build();
     }
-  }, [state.url])
+  }, [state.url, state.token])
 
   return (
     <Ad4minContext.Provider

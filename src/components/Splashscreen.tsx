@@ -1,5 +1,4 @@
 import { Title, Text, Button, createStyles, Space, Image } from '@mantine/core'
-import { appWindow } from '@tauri-apps/api/window';
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -33,9 +32,8 @@ export default function Splashscreen() {
   const { classes } = useStyles();
   const [copied, setCopied] = useState(false);
 
+  // TODO: get logs from server
   function copyFile() {
-    appWindow.emit('copyLogs')
-
     setTimeout(() => {
       setCopied(true);
 

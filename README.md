@@ -21,9 +21,3 @@ Run frontend dev server,
 yarn install
 yarn start
 ```
-
-In another terminal, run the tauri app,
-
-```shell
-yarn tauri dev
-```

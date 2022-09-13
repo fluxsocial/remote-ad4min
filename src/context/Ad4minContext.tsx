@@ -143,10 +143,14 @@ export function Ad4minProvider({ children }: any) {
 
       const { isInitialized, isUnlocked } = await checkIfAgentIsInitialized(client);
 
+      console.log("connectd flag: ", connected);
+      console.log("isUnlocked flag: ", isUnlocked);
+
       setState(prev => ({
         ...prev,
         client,
         url,
+        token,
         isInitialized,
         isUnlocked,
         connected: true,
@@ -183,10 +187,11 @@ export function Ad4minProvider({ children }: any) {
   }
 
   const configureEndpoint = async (url: string, token: string) => {
-    if (url) {
+    if (url && token) {
       setState((prev) => ({
         ...prev,
-        url
+        url,
+        token,
       }));
 
       await connect(url, token)

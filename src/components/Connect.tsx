@@ -82,6 +82,9 @@ export function Connect() {
     if (connected && !isUnlocked) {
       navigate('/login');
     }
+    if (connected && isUnlocked) {
+      navigate('/profile');
+    }
   }, [connected, isUnlocked, navigate])
 
   return (

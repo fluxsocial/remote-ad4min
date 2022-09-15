@@ -143,7 +143,6 @@ export function Ad4minProvider({ children }: any) {
 
       const { isInitialized, isUnlocked } = await checkIfAgentIsInitialized(client);
 
-      console.log("connectd flag: ", connected);
       console.log("isUnlocked flag: ", isUnlocked);
 
       setState(prev => ({
